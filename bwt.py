@@ -1,14 +1,19 @@
 import argparse
 
 def bwt(in_string):
-	table = [in_string]
-	return build_table(table)
+	in_table = [in_string]
+	table = build_table(in_table)
+	return table
 
 def build_table(in_list):
-	in_list.append(in_list[-1][-1]+in_list[-1][0:-1])
-	if len(in_list)==len(in_list[0]):
-		return in_list	
-	return build_table(in_list)
+	if len(in_list)<len(in_list[0]):
+		in_list.append(in_list[-1][-1]+in_list[-1][0:-1])
+		build_table(in_list)
+	return in_list	
+
+def sort_table(table):
+	table.sort()
+	return table
 
 def run(in_file_path, out_file_path):
 	try:
@@ -16,8 +21,10 @@ def run(in_file_path, out_file_path):
 			in_string = fd.read().rstrip()
 	except FileNotFoundError as e:
 		print(e)
+	table = bwt(in_string)
+	sorted_table = sort_table(table)
 	with open(out_file_path, 'w') as fd:
-		fd.write('\n'.join(bwt(in_string)))	
+		fd.write('\n'.join(sorted_table))	
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='Burrows-Wheeler transfrom')
