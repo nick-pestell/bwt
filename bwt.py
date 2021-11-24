@@ -1,5 +1,9 @@
 import argparse
-from transform import bwt
+import sys
+import errno
+
+from bwt.transform import bwt
+from bwt.inv_transform import inv_bwt
 
 def run(in_file_path, out_file_path):
 	try:
@@ -7,6 +11,7 @@ def run(in_file_path, out_file_path):
 			in_string = fd.read().rstrip()
 	except FileNotFoundError as e:
 		print(e)
+		sys.exit(int(errno.ENOENT))
 	output = bwt(in_string)
 	with open(out_file_path, 'w') as fd:
 		fd.write(output)	
