@@ -8,7 +8,7 @@ from bwt.inv_transform import inv_bwt
 def run(in_file_path, out_file_path):
 	try:
 		with open(in_file_path, 'r') as fd:
-			in_string = fd.read().rstrip()
+			in_string = fd.read()
 	except FileNotFoundError as e:
 		print(e)
 		sys.exit(int(errno.ENOENT))
