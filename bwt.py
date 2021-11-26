@@ -10,7 +10,7 @@ def run(in_file_path, out_file_path):
 			in_string = fd.read()
 	except FileNotFoundError as e:
 		print(e)
-		sys.exit(int(errno.ENOENT))
+		sys.exit(errno.ENOENT)
 	output = bwt(in_string)
 	with open(out_file_path, 'w') as fd:
 		fd.write(output)	
