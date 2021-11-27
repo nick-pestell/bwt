@@ -52,7 +52,7 @@ def bwt(in_string):
 		Returns:
 			output (string): transformed string
 	'''
-	in_table = [in_string+'$']
+	in_table = [in_string + bytes.fromhex('7F').decode('utf-8')]
 	table = build_table(in_table)
 	sorted_table = sort_table(table)
 	output = extract_last_column(sorted_table) 
