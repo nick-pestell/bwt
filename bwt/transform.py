@@ -1,3 +1,7 @@
+import sys
+
+sys.setrecursionlimit(1000000)
+
 '''
 Module for performing forward Burrows-Wheeler transforms on strings
 '''
@@ -13,6 +17,7 @@ def build_table(in_list):
 	'''
 	if len(in_list)<len(in_list[0]):
 		in_list.append(in_list[-1][-1]+in_list[-1][0:-1])
+		print(len(in_list))
 		build_table(in_list)
 	return in_list	
 
