@@ -1,13 +1,17 @@
 import sys
 
+'''
+Module for performing forward Burrows-Wheeler transforms on python strings
+'''
+
+# Increase recursion limit
 sys.setrecursionlimit(1000000)
 
-'''
-Module for performing forward Burrows-Wheeler transforms on strings
-'''
 def build_table(in_list):
 	'''
-	Returns a table (list) of strings where each element has character contents rotated by 1
+	Returns a table (list) of strings. Each element in the list 
+	contains the input text string shifted by the element's
+	index
 
 		Parameters:
 			in_list (list): of length 1, contains string to be transformed
@@ -15,48 +19,40 @@ def build_table(in_list):
 		Returns:
 			in_list (list): of lenght len(in_list), table of rotated in_list
 	'''
+	# checks to see if in_list is fully built, i.e. the same length as 
+	# the original string
 	if len(in_list)<len(in_list[0]):
+		# appends an element to in_list which is the string in the last
+		#  element rotated by 1 character 
 		in_list.append(in_list[-1][-1]+in_list[-1][0:-1])
-		print(len(in_list))
+		# recursive call to build_table()
 		build_table(in_list)
+	# if in_list is fully built, it is returned and program moves back
+	# up through recursive calls
 	return in_list	
 
 def sort_table(table):
 	'''
-	Lexically sorts a table (list)
-
-		Parameters:
-			table (list): a list of strings to be lexically sorted
-
-		Returns:
-			table (list): a lexically sorted list of strings
+	Returns a lexicographically sorted a table (list) of strings
 	'''
 	table.sort()
 	return table
 
 def extract_last_column(table):
 	'''
-	Returns last column of table 
-
-		Parameters:
-			table (list): a list of strings
-
-		Returns:
-			last_columns (string): last characters of each element within table
+	Returns last column of table, i.e. the last characters in each
+	element of table concatenated into a single string
 	'''
 	last_column = ''.join([table[i][-1] for i in range(len(table))]) 
 	return last_column
 
 def bwt(in_string):
 	'''
-	Performs Burrows-Wheeler transform
-
-		Parameters:
-			in_string (string): string to be transformed
-
-		Returns:
-			output (string): transformed string
+	Performs Burrows-Wheeler transform. Processes input string and returns 
+	transformed string
 	'''
+	# append an EOF character - chosen to be the last character in the ascii
+	# table
 	in_table = [in_string + bytes.fromhex('7F').decode('utf-8')]
 	table = build_table(in_table)
 	sorted_table = sort_table(table)
