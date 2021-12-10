@@ -1,4 +1,5 @@
 *.pyc
-/test_data
+/compressed
+/uncompressed
 *.txt
 .vscode
