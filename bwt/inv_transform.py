@@ -16,7 +16,7 @@ def build_table(in_string):
     # TODO: this algorithm is very slow - rewrite
     # create table of empty strings
     table = ['']*len(in_string)
-    # Repeats algorithm for len(in_string)
+    # repeats algorithm for len(in_string)
     for i in range(len(in_string)):
         # appends each subsequent character in the transformed input string
         # (in_string) to the string contained in each subsequent element of 

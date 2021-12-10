@@ -1,11 +1,14 @@
 import sys
+import threading
 
 '''
 Module for performing forward Burrows-Wheeler transforms on python strings
 '''
 
-# Increase recursion limit
+# increase recursion limit
 sys.setrecursionlimit(1000000)
+# increase stack size
+threading.stack_size(0x2000000)
 
 def build_table(in_list):
 	'''
@@ -54,7 +57,10 @@ def bwt(in_string):
 	# append an EOF character - chosen to be the last character in the ascii
 	# table
 	in_table = [in_string + bytes.fromhex('7F').decode('utf-8')]
-	table = build_table(in_table)
-	sorted_table = sort_table(table)
+	# Thread object for recursive function
+	t = threading.Thread(target=build_table, args=(in_table,))
+	t.start()
+	t.join()
+	sorted_table = sort_table(in_table)
 	output = extract_last_column(sorted_table) 
 	return output 
