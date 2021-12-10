@@ -5,24 +5,23 @@ import errno
 from bwt.transform import bwt
 from bwt.inv_transform import inv_bwt
 
-def run_forward(in_file_path, out_file_path):
+def read_input_file(in_file_path):
 	try:
 		with open(in_file_path, 'r') as fd:
 			in_string = fd.read()
 	except FileNotFoundError as e:
 		print(e)
 		sys.exit(errno.ENOENT)
+	return in_string
+
+def run_forward(in_file_path, out_file_path):
+	in_string = read_input_file(in_file_path)	
 	output = bwt(in_string)
 	with open(out_file_path, 'w') as fd:
 		fd.write(output)	
 
 def run_inverse(in_file_path, out_file_path):
-	try: 
-		with open(in_file_path, 'r') as fd:
-			in_string = fd.read()
-	except FileNotFoundError as e:
-		print(e)
-		sys.exit(errno.ENOENT)	
+	in_string = read_input_file(in_file_path)	
 	output = inv_bwt(in_string)
 	with open(out_file_path, 'w') as fd:
 		fd.write(output)	
