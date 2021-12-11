@@ -31,7 +31,7 @@ def extract_string(table):
         Returns de-transformed text string given an input table (list)
     '''
     # searches table for the element which with the appended EOF character
-    out_string = [x for x in table if x[-1] == bytes.fromhex('7F').decode('utf-8')][0] 
+    out_string = [x for x in table if x[-1] == '\x7f'][0] 
     return out_string[:-1]
 
 def inv_bwt(in_string):
