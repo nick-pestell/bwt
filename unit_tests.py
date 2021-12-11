@@ -19,19 +19,29 @@ TEST_OUT_TABLE = ['\n\x7fhello world!',
                   'rld!\n\x7fhello wo', 
                   'world!\n\x7fhello ', 
                   '\x7fhello world!\n']
+IN_FILE_PATH = 'test_files/test.txt'
+OUT_FILE_PATH = 'test_files/test_transformed.txt'
 
 class TestBwtTransform(unittest.TestCase):
-    def test_build_table(self):
-        self.assertEqual(len(TEST_IN_STRING), len(build_table([TEST_IN_STRING]))) 
+    def __init__(self, *args, **kwargs):
+        super(TestBwtTransform, self).__init__(*args, **kwargs)
+        with open('test_files/un-transformed/test.txt', 'w') as fd:
+            self.in_string = fd.read()
+        with open('test_fies/transformed/test_transformed.txt', 'w' ) as fd:
+            self.out_string = fd.read()
+
+    def test_build_transform_table(self):
+        self.assertEqual(len(TEST_IN_STRING), len(build_transform_table([TEST_IN_STRING]))) 
         
     def test_bwt(self):
         self.assertEqual(bwt(TEST_IN_STRING), TEST_OUT_STRING)
 
-    def test_build_table(self):
-        self.assertEqual(len(TEST_OUT_STRING), len(build_table(TEST_OUT_STRING)))
+    def test_build_inv_table(self):
+        self.assertEqual(len(TEST_OUT_STRING), len(build_inv_table(TEST_OUT_STRING)))
 
     def test_extract_string(self):
         self.assertEqual(extract_string(TEST_OUT_TABLE), TEST_IN_STRING)
 
     def test_inv_bwt(self):
         self.assertEqual(inv_bwt(TEST_OUT_STRING), TEST_IN_STRING)
+

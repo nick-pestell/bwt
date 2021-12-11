@@ -2,7 +2,7 @@
 Module for performing inverse Burrows-Wheelr transform on python strings
 '''
 
-def build_table(in_string):
+def build_inv_table(in_string):
     '''
     Returns a table (list) of strings derived from the transformed string
 
@@ -39,6 +39,6 @@ def inv_bwt(in_string):
         Performs BWT inverse transform. Processes transformed string and 
         returns de-transformed string 
     '''
-    out_table = build_table(in_string)
+    out_table = build_inv_table(in_string)
     output = extract_string(out_table)
     return output
