@@ -15,7 +15,6 @@ def read_input_file(in_file_path):
 	return in_string
 
 def run_forward(in_file_path, out_file_path):
-	# TODO: for some reason this is deleting the contents in in_file_path 
 	in_string = read_input_file(in_file_path)	
 	output = bwt(in_string)
 	with open(out_file_path, 'w') as fd:

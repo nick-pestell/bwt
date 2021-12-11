@@ -20,32 +20,33 @@ TEST_OUT_TABLE = ['\n\x7fhello world!',
                   'rld!\n\x7fhello wo', 
                   'world!\n\x7fhello ', 
                   '\x7fhello world!\n']
-IN_FILE_PATH = './test_files/turing.txt'
-OUT_FILE_PATH = './test_files/out_turing.txt'
-TABLE_FILE_PATH = './test_files/table.pkl'
+IN_FILE_PATH = 'test_files/turing.txt'
+OUT_FILE_PATH = 'test_files/out_turing.txt'
+TABLE_FILE_PATH = 'test_files/table.pkl'
 
 class TestBwtTransform(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestBwtTransform, self).__init__(*args, **kwargs)
-        with open(IN_FILE_PATH, 'w') as fd:
+        self.maxDiff = None
+        with open(IN_FILE_PATH, 'r') as fd:
             self.in_string = fd.read()
-        with open(OUT_FILE_PATH, 'w' ) as fd:
+        with open(OUT_FILE_PATH, 'r' ) as fd:
             self.out_string = fd.read()
         with open(TABLE_FILE_PATH, 'rb') as fd:
             self.table = pkl.load(fd)
 
     def test_build_transform_table(self):
-        self.assertListEqual(self.table, build_transform_table([self.in_string])) 
+        self.assertEqual(self.table, build_transform_table([self.in_string + '\x7f'])) 
         
     def test_bwt(self):
         self.assertEqual(bwt(self.in_string), self.out_string)
 
     def test_build_inv_table(self):
-        self.assertEqual(len(self.out_string), len(build_inv_table(self.out_string)))
+        self.assertEqual(len(self.out_string + '\x7f'), len(build_inv_table(self.out_string + '\x7f')))
 
     def test_extract_string(self):
         self.assertEqual(extract_string(self.table), self.in_string)
 
+    # TODO: this test is failing now
     def test_inv_bwt(self):
         self.assertEqual(inv_bwt(self.out_string), self.in_string)
-
