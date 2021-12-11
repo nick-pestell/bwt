@@ -10,7 +10,7 @@ sys.setrecursionlimit(1000000)
 # increase stack size
 threading.stack_size(0x2000000)
 
-def build_table(in_list):
+def build_transform_table(in_list):
 	'''
 	Returns a table (list) of strings. Each element in the list 
 	contains the input text string shifted by the element's
@@ -29,7 +29,7 @@ def build_table(in_list):
 		#  element rotated by 1 character 
 		in_list.append(in_list[-1][-1]+in_list[-1][0:-1])
 		# recursive call to build_table()
-		build_table(in_list)
+		build_transform_table(in_list)
 	# if in_list is fully built, it is returned and program moves back
 	# up through recursive calls
 	return in_list	
@@ -56,9 +56,9 @@ def bwt(in_string):
 	'''
 	# append an EOF character - chosen to be the last character in the ascii
 	# table
-	in_table = [in_string + bytes.fromhex('7F').decode('utf-8')]
+	in_table = [in_string + '\x7f']
 	# Thread object for recursive function
-	t = threading.Thread(target=build_table, args=(in_table,))
+	t = threading.Thread(target=build_transform_table, args=(in_table,))
 	t.start()
 	t.join()
 	sorted_table = sort_table(in_table)
