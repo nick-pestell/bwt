@@ -50,3 +50,6 @@ class TestBwtTransform(unittest.TestCase):
     # TODO: this test is failing now
     def test_inv_bwt(self):
         self.assertEqual(inv_bwt(self.out_string), self.in_string)
+
+if __name__ == "__main__":
+    unittest.main()
