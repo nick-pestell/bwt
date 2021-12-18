@@ -71,4 +71,4 @@ if __name__ == '__main__':
             unittest.main()
     except argparse.ArgumentError as e:
         print(e)
-        sys.exit(errno.ENOENT)
+        sys.exit(errno.EINVAL)
