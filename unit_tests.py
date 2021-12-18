@@ -13,7 +13,6 @@ TABLE_FILE_PATH = 'test_files/table.pkl'
 class TestBwtTransform(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestBwtTransform, self).__init__(*args, **kwargs)
-        self.maxDiff = None
         with open(IN_FILE_PATH, 'r') as fd:
             self.in_string = fd.read()
         with open(OUT_FILE_PATH, 'r' ) as fd:
@@ -30,7 +29,6 @@ class TestBwtTransform(unittest.TestCase):
 class TestBwtInverseTransfrom(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestBwtInverseTransfrom, self).__init__(*args, **kwargs)
-        self.maxDiff = None
         with open(IN_FILE_PATH, 'r') as fd:
             self.in_string = fd.read()
         with open(OUT_FILE_PATH, 'r' ) as fd:
@@ -62,14 +60,15 @@ if __name__ == '__main__':
                                    help='Forward or inverse transform', default=None)
     args = parser.parse_args()
     try:
-        if args.type[0] == 'forward':
-            runner.run(test_suit(bwt_tests)) 
-        elif args.type[0] == 'inverse':
-            runner.run(test_suit(inv_bwt_test)) 
-        elif args.type[0] == None:
-            unittest.main()
+        if args.type:
+            if args.type[0] == 'forward':
+                runner.run(test_suit(bwt_tests)) 
+            elif args.type[0] == 'inverse':
+                runner.run(test_suit(inv_bwt_test)) 
+            else:
+                raise argparse.ArgumentError(type_arg, "Invalid argument. Please use 'forward' or 'reverse'")
         else:
-            raise argparse.ArgumentError(type_arg, "Invalid argument. Please use 'forward' or 'reverse'")
+            unittest.main()
     except argparse.ArgumentError as e:
         print(e)
         sys.exit(errno.ENOENT)
