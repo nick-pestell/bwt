@@ -18,10 +18,10 @@ def build_inv_table(in_string):
     table = ['']*len(in_string)
     # Repeats algorithm for len(in_string)
     for i in range(len(in_string)):
-        # appends each subsequent character in the transformed input string
+        # preppends each subsequent character in the transformed input string
         # (in_string) to the string contained in each subsequent element of 
         # the output list (table).
-        table = [in_string[i] + table[i] for i in range(len(in_string))]
+        table = [in_string[i] + l for i,l in enumerate(table)]
         # sort the elements of table into lexicographical order
         table.sort()
     return table
@@ -30,7 +30,7 @@ def extract_string(table):
     '''
         Returns de-transformed text string given an input table (list)
     '''
-    # searches table for the element which with the appended EOF character
+    # searches table for the element with the appended EOF character
     out_string = [x for x in table if x[-1] == '\x7f'][0] 
     return out_string[:-1]
 
