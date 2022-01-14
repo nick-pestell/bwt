@@ -10,32 +10,28 @@ IN_FILE_PATH = 'test_files/turing.txt'
 OUT_FILE_PATH = 'test_files/out_turing.txt'
 TABLE_FILE_PATH = 'test_files/table.pkl'
 
-class TestBwtTransform(unittest.TestCase):
-    def __init__(self, *args, **kwargs):
-        super(TestBwtTransform, self).__init__(*args, **kwargs)
+class TestBwt(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
         with open(IN_FILE_PATH, 'r') as fd:
-            self.in_string = fd.read()
+            cls.in_string = fd.read()
         with open(OUT_FILE_PATH, 'r' ) as fd:
-            self.out_string = fd.read()
+            cls.out_string = fd.read()
         with open(TABLE_FILE_PATH, 'rb') as fd:
-            self.table = pkl.load(fd)
+            cls.table = pkl.load(fd)
+        
+    @classmethod
+    def tearDownClass(cls):
+        pass
 
+class TestBwtForwardTransform(TestBwt):
     def test_build_transform_table(self):
         self.assertEqual(self.table, build_transform_table([self.in_string + '\x7f'])) 
         
     def test_bwt(self):
         self.assertEqual(bwt(self.in_string), self.out_string)
 
-class TestBwtInverseTransfrom(unittest.TestCase):
-    def __init__(self, *args, **kwargs):
-        super(TestBwtInverseTransfrom, self).__init__(*args, **kwargs)
-        with open(IN_FILE_PATH, 'r') as fd:
-            self.in_string = fd.read()
-        with open(OUT_FILE_PATH, 'r' ) as fd:
-            self.out_string = fd.read()
-        with open(TABLE_FILE_PATH, 'rb') as fd:
-            self.table = pkl.load(fd)
-
+class TestBwtInverseTransfrom(TestBwt):
     def test_build_inv_table(self):
         self.assertEqual(len(self.out_string + '\x7f'), len(build_inv_table(self.out_string + '\x7f')))
 
@@ -50,7 +46,7 @@ def test_suit(test_objs):
     return suit
     
 if __name__ == '__main__':
-    bwt_tests = [TestBwtTransform('test_build_transform_table'), TestBwtTransform('test_bwt')]
+    bwt_tests = [TestBwtForwardTransform('test_build_transform_table'), TestBwtForwardTransform('test_bwt')]
     inv_bwt_test = [TestBwtInverseTransfrom('test_build_inv_table'), 
                     TestBwtInverseTransfrom('test_extract_string'),
                     TestBwtInverseTransfrom('test_inv_bwt')]
