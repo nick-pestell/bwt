@@ -11,14 +11,18 @@ OUT_FILE_PATH = 'test_files/out_turing.txt'
 TABLE_FILE_PATH = 'test_files/table.pkl'
 
 class TestBwtTransform(unittest.TestCase):
-    def __init__(self, *args, **kwargs):
-        super(TestBwtTransform, self).__init__(*args, **kwargs)
+    @classmethod
+    def setUpClass(cls):
         with open(IN_FILE_PATH, 'r') as fd:
-            self.in_string = fd.read()
+            cls.in_string = fd.read()
         with open(OUT_FILE_PATH, 'r' ) as fd:
-            self.out_string = fd.read()
+            cls.out_string = fd.read()
         with open(TABLE_FILE_PATH, 'rb') as fd:
-            self.table = pkl.load(fd)
+            cls.table = pkl.load(fd)
+        
+    @classmethod
+    def tearDownClass(cls):
+        pass
 
     def test_build_transform_table(self):
         self.assertEqual(self.table, build_transform_table([self.in_string + '\x7f'])) 
@@ -27,14 +31,18 @@ class TestBwtTransform(unittest.TestCase):
         self.assertEqual(bwt(self.in_string), self.out_string)
 
 class TestBwtInverseTransfrom(unittest.TestCase):
-    def __init__(self, *args, **kwargs):
-        super(TestBwtInverseTransfrom, self).__init__(*args, **kwargs)
+    @classmethod
+    def setUpClass(cls):
         with open(IN_FILE_PATH, 'r') as fd:
-            self.in_string = fd.read()
+            cls.in_string = fd.read()
         with open(OUT_FILE_PATH, 'r' ) as fd:
-            self.out_string = fd.read()
+            cls.out_string = fd.read()
         with open(TABLE_FILE_PATH, 'rb') as fd:
-            self.table = pkl.load(fd)
+            cls.table = pkl.load(fd)
+        
+    @classmethod
+    def tearDownClass(cls):
+        pass
 
     def test_build_inv_table(self):
         self.assertEqual(len(self.out_string + '\x7f'), len(build_inv_table(self.out_string + '\x7f')))
