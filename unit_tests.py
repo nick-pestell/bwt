@@ -1,10 +1,13 @@
+from io import TextIOBase
 import unittest
+from unittest import mock
 import pickle as pkl
 import argparse
 import errno
 
 from bwt.transform import *
 from bwt.inv_transform import *
+from burrows_wheeler import * 
 
 IN_FILE_PATH = 'test_files/turing.txt'
 OUT_FILE_PATH = 'test_files/out_turing.txt'
@@ -41,15 +44,27 @@ class TestBwtInverseTransfrom(TestBwt):
     def test_inv_bwt(self):
         self.assertEqual(inv_bwt(self.out_string), self.in_string)
 
+class TestBwtMain(unittest.TestCase):
+    def test_read_input_file(self):
+        with self.assertRaises(SystemExit) as cm:
+            read_input_file('foo')
+        self.assertEqual(cm.exception.code, errno.ENOENT)
+        with mock.patch('burrows_wheeler.open') as open_mocked:
+            open_mocked.return_value = mock.Mock()
+            with mock.patch('burrows_wheeler.open_mocked.return_value') as read_mocked:
+                read_mocked.return_value = 'success' 
+                self.assertEqual('success', read_input_file('foo'))
+
 def test_suit(test_objs):
     suit = unittest.TestSuite(test_objs)
     return suit
     
 if __name__ == '__main__':
-    bwt_tests = [TestBwtForwardTransform('test_build_transform_table'), TestBwtForwardTransform('test_bwt')]
+    forwd_bwt_tests = [TestBwtForwardTransform('test_build_transform_table'), TestBwtForwardTransform('test_bwt')]
     inv_bwt_test = [TestBwtInverseTransfrom('test_build_inv_table'), 
                     TestBwtInverseTransfrom('test_extract_string'),
                     TestBwtInverseTransfrom('test_inv_bwt')]
+    bwt_test = [TestBwtMain('test_read_input_file')]
     runner = unittest.TextTestRunner()
     parser = argparse.ArgumentParser(description='Test code')
     type_arg = parser.add_argument('--type', '-t', nargs=1, 
@@ -58,7 +73,7 @@ if __name__ == '__main__':
     try:
         if args.type:
             if args.type[0] == 'forward':
-                runner.run(test_suit(bwt_tests)) 
+                runner.run(test_suit(forwd_bwt_tests)) 
             elif args.type[0] == 'inverse':
                 runner.run(test_suit(inv_bwt_test)) 
             else:
