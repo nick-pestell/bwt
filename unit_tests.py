@@ -1,10 +1,12 @@
 import unittest
+from unittest import mock
 import pickle as pkl
 import argparse
 import errno
 
-from bwt.transform import *
-from bwt.inv_transform import *
+from burrows_wheeler.transform import *
+from burrows_wheeler.inv_transform import *
+from bwt import * 
 
 IN_FILE_PATH = 'test_files/turing.txt'
 OUT_FILE_PATH = 'test_files/out_turing.txt'
@@ -41,15 +43,48 @@ class TestBwtInverseTransfrom(TestBwt):
     def test_inv_bwt(self):
         self.assertEqual(inv_bwt(self.out_string), self.in_string)
 
+class TestBwtInterface(TestBwt):
+    def test_read_input_file(self):
+        # test file not found
+        with self.assertRaises(SystemExit) as context:
+            read_input_file('foo.txt')
+        self.assertEqual(context.exception.code, errno.ENOENT)
+        # test succesful IO
+        mock_open = mock.mock_open(read_data = 'success')
+        with mock.patch('builtins.open', mock_open):
+            self.assertEqual(read_input_file('foo.txt'), 'success')
+
+    def test_run_forward(self):
+        with mock.patch('bwt.read_input_file') as patch:
+            patch.return_value = self.in_string 
+            mock_open = mock.mock_open()
+            with mock.patch('builtins.open', mock_open):
+                run_forward('foo.txt', 'bar.txt')
+                patch.assert_called_once_with('foo.txt')
+                mock_open.assert_called_once_with('bar.txt', 'w')
+                self.assertEqual(mock_open().write.call_args[0][0], self.out_string)
+
+    def test_run_inverse(self):
+        with mock.patch('bwt.read_input_file') as patch:
+            patch.return_value = self.out_string 
+            mock_open = mock.mock_open()
+            with mock.patch('builtins.open', mock_open):
+                run_inverse('foo.txt', 'bar.txt')
+                patch.assert_called_once_with('foo.txt')
+                mock_open.assert_called_once_with('bar.txt', 'w')
+                self.assertEqual(mock_open().write.call_args[0][0], self.in_string)
+
 def test_suit(test_objs):
     suit = unittest.TestSuite(test_objs)
     return suit
     
 if __name__ == '__main__':
-    bwt_tests = [TestBwtForwardTransform('test_build_transform_table'), TestBwtForwardTransform('test_bwt')]
+    forwd_bwt_tests = [TestBwtForwardTransform('test_build_transform_table'), TestBwtForwardTransform('test_bwt')]
     inv_bwt_test = [TestBwtInverseTransfrom('test_build_inv_table'), 
                     TestBwtInverseTransfrom('test_extract_string'),
                     TestBwtInverseTransfrom('test_inv_bwt')]
+    interface_test = [TestBwtInterface('test_read_input_file'), TestBwtInterface('test_run_forward'),
+                      TestBwtInterface('test_run_inverse')]
     runner = unittest.TextTestRunner()
     parser = argparse.ArgumentParser(description='Test code')
     type_arg = parser.add_argument('--type', '-t', nargs=1, 
@@ -58,11 +93,13 @@ if __name__ == '__main__':
     try:
         if args.type:
             if args.type[0] == 'forward':
-                runner.run(test_suit(bwt_tests)) 
+                runner.run(test_suit(forwd_bwt_tests)) 
             elif args.type[0] == 'inverse':
                 runner.run(test_suit(inv_bwt_test)) 
+            elif args.type[0] == 'interface':
+                runner.run(test_suit(interface_test)) 
             else:
-                raise argparse.ArgumentError(type_arg, "Invalid argument. Please use 'forward' or 'reverse'")
+                raise argparse.ArgumentError(type_arg, "Invalid argument. Please use 'forward', 'reverse' or 'interface'")
         else:
             unittest.main()
     except argparse.ArgumentError as e:
