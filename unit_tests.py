@@ -60,8 +60,19 @@ class TestBwtInterface(TestBwt):
             mock_open = mock.mock_open()
             with mock.patch('builtins.open', mock_open):
                 run_forward('foo.txt', 'bar.txt')
+                patch.assert_called_once_with('foo.txt')
                 mock_open.assert_called_once_with('bar.txt', 'w')
                 self.assertEqual(mock_open().write.call_args[0][0], self.out_string)
+
+    def test_run_inverse(self):
+        with mock.patch('bwt.read_input_file') as patch:
+            patch.return_value = self.out_string 
+            mock_open = mock.mock_open()
+            with mock.patch('builtins.open', mock_open):
+                run_inverse('foo.txt', 'bar.txt')
+                patch.assert_called_once_with('foo.txt')
+                mock_open.assert_called_once_with('bar.txt', 'w')
+                self.assertEqual(mock_open().write.call_args[0][0], self.in_string)
 
 def test_suit(test_objs):
     suit = unittest.TestSuite(test_objs)
@@ -72,7 +83,8 @@ if __name__ == '__main__':
     inv_bwt_test = [TestBwtInverseTransfrom('test_build_inv_table'), 
                     TestBwtInverseTransfrom('test_extract_string'),
                     TestBwtInverseTransfrom('test_inv_bwt')]
-    interface_test = [TestBwtInterface('test_read_input_file'), TestBwtInterface('test_run_forward')]
+    interface_test = [TestBwtInterface('test_read_input_file'), TestBwtInterface('test_run_forward'),
+                      TestBwtInterface('test_run_inverse')]
     runner = unittest.TextTestRunner()
     parser = argparse.ArgumentParser(description='Test code')
     type_arg = parser.add_argument('--type', '-t', nargs=1, 
