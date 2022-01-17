@@ -1,13 +1,12 @@
-from io import TextIOBase
 import unittest
 from unittest import mock
 import pickle as pkl
 import argparse
 import errno
 
-from bwt.transform import *
-from bwt.inv_transform import *
-from burrows_wheeler import * 
+from burrows_wheeler.transform import *
+from burrows_wheeler.inv_transform import *
+from bwt import * 
 
 IN_FILE_PATH = 'test_files/turing.txt'
 OUT_FILE_PATH = 'test_files/out_turing.txt'
@@ -46,14 +45,14 @@ class TestBwtInverseTransfrom(TestBwt):
 
 class TestBwtMain(unittest.TestCase):
     def test_read_input_file(self):
+        # test file not found
         with self.assertRaises(SystemExit) as cm:
-            read_input_file('foo')
+            read_input_file('foo.txt')
         self.assertEqual(cm.exception.code, errno.ENOENT)
-        with mock.patch('burrows_wheeler.open') as open_mocked:
-            open_mocked.return_value = mock.Mock()
-            with mock.patch('burrows_wheeler.open_mocked.return_value') as read_mocked:
-                read_mocked.return_value = 'success' 
-                self.assertEqual('success', read_input_file('foo'))
+        # test succesful IO
+        mock_open = mock.mock_open(read_data = 'success')
+        with mock.patch('builtins.open', mock_open):
+            self.assertEqual(read_input_file('foo.txt'), 'success')
 
 def test_suit(test_objs):
     suit = unittest.TestSuite(test_objs)

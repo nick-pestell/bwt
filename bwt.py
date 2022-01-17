@@ -2,8 +2,8 @@ import argparse
 import sys
 import errno
 
-from bwt.transform import bwt
-from bwt.inv_transform import inv_bwt
+from burrows_wheeler.transform import bwt
+from burrows_wheeler.inv_transform import inv_bwt
 
 def read_input_file(in_file_path):
 	try:
