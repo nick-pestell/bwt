@@ -43,16 +43,25 @@ class TestBwtInverseTransfrom(TestBwt):
     def test_inv_bwt(self):
         self.assertEqual(inv_bwt(self.out_string), self.in_string)
 
-class TestBwtMain(unittest.TestCase):
+class TestBwtInterface(TestBwt):
     def test_read_input_file(self):
         # test file not found
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(SystemExit) as context:
             read_input_file('foo.txt')
-        self.assertEqual(cm.exception.code, errno.ENOENT)
+        self.assertEqual(context.exception.code, errno.ENOENT)
         # test succesful IO
         mock_open = mock.mock_open(read_data = 'success')
         with mock.patch('builtins.open', mock_open):
             self.assertEqual(read_input_file('foo.txt'), 'success')
+
+    def test_run_forward(self):
+        with mock.patch('bwt.read_input_file') as patch:
+            patch.return_value = self.in_string 
+            mock_open = mock.mock_open()
+            with mock.patch('builtins.open', mock_open):
+                run_forward('foo.txt', 'bar.txt')
+                mock_open.assert_called_once_with('bar.txt', 'w')
+                self.assertEqual(mock_open().write.call_args[0][0], self.out_string)
 
 def test_suit(test_objs):
     suit = unittest.TestSuite(test_objs)
@@ -63,7 +72,7 @@ if __name__ == '__main__':
     inv_bwt_test = [TestBwtInverseTransfrom('test_build_inv_table'), 
                     TestBwtInverseTransfrom('test_extract_string'),
                     TestBwtInverseTransfrom('test_inv_bwt')]
-    bwt_test = [TestBwtMain('test_read_input_file')]
+    interface_test = [TestBwtInterface('test_read_input_file'), TestBwtInterface('test_run_forward')]
     runner = unittest.TextTestRunner()
     parser = argparse.ArgumentParser(description='Test code')
     type_arg = parser.add_argument('--type', '-t', nargs=1, 
@@ -75,8 +84,10 @@ if __name__ == '__main__':
                 runner.run(test_suit(forwd_bwt_tests)) 
             elif args.type[0] == 'inverse':
                 runner.run(test_suit(inv_bwt_test)) 
+            elif args.type[0] == 'interface':
+                runner.run(test_suit(interface_test)) 
             else:
-                raise argparse.ArgumentError(type_arg, "Invalid argument. Please use 'forward' or 'reverse'")
+                raise argparse.ArgumentError(type_arg, "Invalid argument. Please use 'forward', 'reverse' or 'interface'")
         else:
             unittest.main()
     except argparse.ArgumentError as e:
