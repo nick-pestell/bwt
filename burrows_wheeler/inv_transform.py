@@ -21,7 +21,7 @@ def build_inv_table(in_string):
         # preppends each subsequent character in the transformed input string
         # (in_string) to the string contained in each subsequent element of 
         # the output list (table).
-        table = [in_string[i] + l for i,l in enumerate(table)]
+        table = [in_string[i] + l for i,l in enumerate(table)] # seems like a probem here is that table is re-written everytime this line is executed -> could be why it's so slow.
         # sort the elements of table into lexicographical order
         table.sort()
     return table
